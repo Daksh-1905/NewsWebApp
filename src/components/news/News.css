@@ -1,0 +1,26 @@
+.mainDiv {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.img-size {
+  height: 13rem;
+}
+
+.btn-position {
+  position: absolute;
+  bottom: 1rem;
+}
+
+.heading {
+  width: 100%;
+  height: 2.5rem;
+  background-color: wheat;
+  margin-bottom: 1rem;
+}
+
+.heading-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
