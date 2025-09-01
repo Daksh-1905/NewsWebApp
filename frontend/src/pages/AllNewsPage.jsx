@@ -1,49 +1,73 @@
 import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import Spinner from "../components/Spinner";
-import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Navbar from "../components/Navbar";
 
 const AllNewsPage = (props) => {
-  const location = useLocation();
-  const token = location.state;
-  console.log(token);
+  const navigate = useNavigate();
   const [articles, setArticles] = useState([]);
   const [totalResults, setTotalResults] = useState(0);
   const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
   };
+  const handleSaveArticle = async (ele) => {
+    try {
+      let response = await fetch("/api/saveArticle", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(ele),
+      });
+      if (!response.ok) {
+        alert("Error Saving Article");
+        return;
+      }
+      alert("Article saved successfully");
+      return;
+    } catch (error) {
+      console.error(error);
+    }
+  };
   const fetchData = async () => {
     try {
       let response = await fetch(
-        `http://localhost:8080/api/news?category=${props.category}`,
+        `/api/news?category=${props.category}`,
         {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
-          // credentials:'include'
+          credentials: "include",
         }
       );
+      if (!response.ok) {
+        navigate("/login");
+        return;
+      }
       let data = await response.json();
-      console.log("Data", data);
       setArticles(articles.concat(data.data.articles));
       setTotalResults(data.data.totalResults);
-    } catch (error) {}
+    } catch (error) {
+      console.error(error);
+    }
   };
   useEffect(() => {
-    document.title = `${capitalizeFirstLetter(props.category)} - News2Day`;
+    document.title = `${capitalizeFirstLetter(props.category)} - NewsHub`;
     setArticles([]);
     fetchData();
   }, [props.category]);
 
   return (
     <>
+      <Navbar />
       <h1
-        className="text-center text-2xl font-bold"
-        style={{ margin: "35px 0px", marginTop: "90px", color: "red" }}
+        className="text-center text-2xl font-bold my-20 text-blue-500"
+        // style={{ margin: "35px 0px", marginTop: "90px", color: "red" }}
       >
-        News2Day - Top {capitalizeFirstLetter(props.category)} Headlines
+        Top {capitalizeFirstLetter(props.category)} Headlines
       </h1>
 
       <InfiniteScroll
@@ -65,7 +89,7 @@ const AllNewsPage = (props) => {
                 >
                   <div className="absolute top-2 right-2">
                     <span className="inline-block bg-red-600 text-white rounded-full px-2 py-1 text-xs">
-                      {/* {ele.source?.name} */}
+                      {ele.source?.name}
                     </span>
                   </div>
 
@@ -106,14 +130,24 @@ const AllNewsPage = (props) => {
                           {new Date(ele.publishedAt).toGMTString()}
                         </small>
                       </p>
-                      <a
-                        rel="noreferrer"
-                        href={ele.url}
-                        target="_blank"
-                        className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
-                      >
-                        Read More
-                      </a>
+                      <div className="flex justify-between">
+                        <a
+                          rel="noreferrer"
+                          href={ele.url}
+                          target="_blank"
+                          className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
+                        >
+                          Read More
+                        </a>
+                        <button
+                          className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded"
+                          onClick={() => {
+                            handleSaveArticle(ele);
+                          }}
+                        >
+                          Save Article
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

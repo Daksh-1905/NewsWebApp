@@ -1,3 +1,5 @@
+const User = require("../models/UserModel");
+
 const showNews = async (req, res) => {
   try {
     let response = await fetch(
@@ -10,4 +12,24 @@ const showNews = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
-module.exports = { showNews };
+
+const saveArticle = async (req, res) => {
+  try {
+    let user = await User.findOne({ email: req.user.email });
+    user.savedArticles.push(req.body);
+    user.save();
+    res.status(200).json({ message: "Article added succesfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const showSavedArticles = async (req, res) => {
+  try {
+    let user = await User.findOne({ email: req.user.email });
+    res.status(200).json({ data: user.savedArticles });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+module.exports = { showNews, saveArticle, showSavedArticles };

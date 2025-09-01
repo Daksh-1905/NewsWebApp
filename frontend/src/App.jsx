@@ -5,6 +5,7 @@ import AllNewsPage from "./pages/AllNewsPage";
 import Login from "./pages/Auth/Login";
 import Register from "./pages/Auth/Register";
 import Homepage from "./pages/Homepage";
+import SavedNewsPage from "./pages/SavedNewsPage";
 
 const App = () => {
   const [mode, setMode] = useState("light");
@@ -21,7 +22,6 @@ const App = () => {
 
   return (
     <>
-      <Navbar />
       <Routes>
         <Route
           exact
@@ -71,6 +71,7 @@ const App = () => {
         <Route exact path="/login" element={<Login />} />
         <Route exact path="/register" element={<Register />} />
         <Route exact path="/" element={<Homepage />} />
+        <Route exact path="/saved" element={<SavedNewsPage />} />
       </Routes>
     </>
   );

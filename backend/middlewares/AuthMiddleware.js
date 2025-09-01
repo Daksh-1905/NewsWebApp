@@ -1,24 +1,28 @@
 const jwt = require("jsonwebtoken");
 
 const loginMiddleware = (req, res, next) => {
-  const token = req.rawHeaders[req.rawHeaders.indexOf("Authorization") + 1];
+
+  let token = req.cookies && req.cookies.access_token;
+
+  if (!token && req.headers && req.headers.authorization) {
+    const parts = req.headers.authorization.split(" ");
+    if (parts.length === 2 && parts[0] === "Bearer") {
+      token = parts[1];
+    }
+  }
+
   if (!token) {
-    res.status(401).json({ message: "Token is missing" });
+    return res.status(401).json({ message: "Token is missing" });
   }
-
-  const tokenParts = token.split(" ");
-  if (tokenParts[0] !== "Bearer" || !tokenParts[1]) {
-    return res.status(400).send("Invalid Token Format.");
-  }
-
-  const actualToken = tokenParts[1];
 
   try {
-    const decoded = jwt.verify(actualToken, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
+    // console.log(req.cookies)
     next();
   } catch (error) {
-    res.status(400).json({ message: "Invalid Token" });
+    console.error("JWT verify error:", error.message || error);
+    return res.status(401).json({ message: "Invalid Token" });
   }
 };
 

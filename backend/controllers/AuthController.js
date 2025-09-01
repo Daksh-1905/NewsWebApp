@@ -17,11 +17,20 @@ const loginController = async (req, res) => {
       lastName: user.lastName,
       email: user.email,
     };
+    // console.log(payload);
 
-    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "1h" });
-    // console.log(token)
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    // console.log("Token", token);
+    res.cookie("access_token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 3600000,
+      sameSite: "Lax",
+    });
 
-    res.status(200).json({ message: "Login successful", token: token });
+    res.status(200).json({ message: "Login successful" });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
@@ -49,4 +58,13 @@ const registerController = async (req, res) => {
   }
 };
 
-module.exports = { loginController, registerController };
+const logoutController = async (req, res) => {
+  try {
+    res.clearCookie("access_token");
+    res.status(200).json({ message: "Logout Successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server error" });
+  }
+};
+
+module.exports = { loginController, registerController, logoutController };

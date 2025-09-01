@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -9,107 +10,106 @@ const Login = () => {
     e.preventDefault();
     const payload = { email, password };
     try {
-      let response = await fetch("http://localhost:8080/api/login", {
+      let response = await fetch("/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(payload),
+        credentials: "include",
       });
 
       if (!response.ok) {
         alert("Login failed");
         return;
       }
-      let data = await response.json();
-
       alert("Login successful");
-      navigate("/general", { state: data.token });
+      navigate("/general");
     } catch (error) {
       console.error(error);
     }
   };
-  return (
-    <>
-      <div className="w-full max-w-sm mx-auto overflow-hidden bg-white rounded-lg shadow-md dark:bg-gray-800">
-        <div className="px-6 py-4">
-          <div className="flex justify-center mx-auto">
-            <img
-              className="w-auto h-7 sm:h-8"
-              src="https://merakiui.com/images/logo.svg"
-              alt=""
-            />
-          </div>
 
-          <h3 className="mt-3 text-xl font-medium text-center text-gray-600 dark:text-gray-200">
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-100 via-gray-100 to-blue-50">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-500 to-indigo-500 py-6 text-center">
+          <img
+            className="w-auto h-10 mx-auto"
+            src="https://merakiui.com/images/logo.svg"
+            alt="Logo"
+          />
+        </div>
+
+        <div className="px-8 py-6">
+          <h3 className="text-2xl font-bold text-center text-gray-800">
             Welcome Back
           </h3>
-
-          <p className="mt-1 text-center text-gray-500 dark:text-gray-400">
-            Login or create account
+          <p className="mt-2 text-center text-gray-500">
+            Login or create an account
           </p>
 
-          <form onSubmit={handleOnSubmit}>
-            <div className="w-full mt-4">
+          {/* Form */}
+          <form onSubmit={handleOnSubmit} className="mt-6 space-y-5">
+            {/* Email Input */}
+            <div>
               <input
-                className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
+                className="block w-full px-4 py-3 text-gray-800 placeholder-gray-400 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
                 type="email"
                 placeholder="Email Address"
                 aria-label="Email Address"
                 name="email"
                 value={email}
-                onChange={(e) => {
-                  setEmail(e.target.value);
-                }}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
-            <div className="w-full mt-4">
+            {/* Password Input */}
+            <div>
               <input
-                className="block w-full px-4 py-2 mt-2 text-gray-700 placeholder-gray-500 bg-white border rounded-lg dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
+                className="block w-full px-4 py-3 text-gray-800 placeholder-gray-400 bg-gray-50 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-400 focus:outline-none transition"
                 type="password"
                 placeholder="Password"
                 aria-label="Password"
                 name="password"
                 value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
-            <div className="flex items-center justify-between mt-4">
+            {/* Actions */}
+            <div className="flex items-center justify-between text-sm">
               <a
                 href="#"
-                className="text-sm text-gray-600 dark:text-gray-200 hover:text-gray-500"
+                className="text-blue-500 hover:text-blue-600 font-medium"
               >
-                Forget Password?
+                Forgot Password?
               </a>
-
-              <button
-                className="px-6 py-2 text-sm font-medium tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50"
-                type="submit"
-              >
-                Sign In
-              </button>
             </div>
+
+            {/* Submit Button */}
+            <button
+              className="w-full px-6 py-3 text-white font-semibold bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg hover:from-blue-600 hover:to-indigo-600 shadow-md transform hover:scale-[1.02] transition-all duration-200"
+              type="submit"
+            >
+              Sign In
+            </button>
           </form>
         </div>
 
-        <div className="flex items-center justify-center py-4 text-center bg-gray-50 dark:bg-gray-700">
-          <span className="text-sm text-gray-600 dark:text-gray-200">
-            Don't have an account?{" "}
-          </span>
-
-          <a
-            href="#"
-            className="mx-2 text-sm font-bold text-blue-500 dark:text-blue-400 hover:underline"
+        {/* Footer */}
+        <div className="flex items-center justify-center py-5 bg-gray-50">
+          <span className="text-sm text-gray-600">Don't have an account? </span>
+          <Link
+            to="/register"
+            className="ml-1 text-sm font-bold text-blue-500 hover:text-blue-600 hover:underline"
           >
             Register
-          </a>
+          </Link>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
